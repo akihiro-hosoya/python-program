@@ -22,7 +22,7 @@
                     <a href="/" class="nav-link">ホーム</a>
                     {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a href="" class="nav-link">投稿</a>
+                        <a href="{% url 'post_new' %}" class="nav-link">投稿</a>
                     </li>
                     <li class="nav-item">
                         <a href="" class="nav-link">ログアウト</a>
