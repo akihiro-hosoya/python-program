@@ -20,7 +20,7 @@ class PostDetailView(View):
 		'post_data' : post_data
         })
 
-class CreatePostView(View):
+class CreatePostView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         form = PostForm(request.POST or None)
         return render(request, 'blog/post_form.html', {
@@ -30,7 +30,7 @@ class CreatePostView(View):
     def post(self, request, *args, **kwargs):
         form = PostForm(request.POST or None)
 
-        if form.is_vaild():
+        if form.is_valid():
             post_data = Post()
             post_data.author = request.user
             post_data.title = form.cleaned_data['title']
