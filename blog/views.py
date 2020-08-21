@@ -71,7 +71,6 @@ class PostEditView(LoginRequiredMixin, View):
             'form': form
         })
 
-
 class PostDeleteView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         post_data = Post.objects.get(id=self.kwargs['pk'])
