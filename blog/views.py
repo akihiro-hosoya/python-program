@@ -17,7 +17,7 @@ class PostDetailView(View):
     def get(self, request, *args, **kwargs):
         post_data = Post.objects.get(id=self.kwargs['pk'])
         return render(request, 'blog/post_detail.html', {
-		'post_data' : post_data
+            'post_data': post_data
         })
 
 class CreatePostView(LoginRequiredMixin, View):
@@ -42,4 +42,44 @@ class CreatePostView(LoginRequiredMixin, View):
         return render(request, 'blog/post_form.html', {
             'form': form
         })
-        
+
+class PostEditView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        post_data = Post.objects.get(id=self.kwargs['pk'])
+        form = PostForm(
+            request.POST or None,
+            initial={
+                'title' : post_data.title,
+                'content' : post_data.content,
+            }
+        )
+        return render(request, 'blog/post_form.html', {
+            'form': form
+        })
+
+    def post(self, request, *args, **kwargs):
+        form = PostForm(request.POST or None)
+
+        if form.is_valid():
+            post_data = Post.objects.get(id=self.kwargs['pk'])
+            post_data.title = form.cleaned_data['title']
+            post_data.content = form.cleaned_data['content']
+            post_data.save()
+            return redirect('post_detail', self.kwargs['pk'])
+
+        return render(request, 'blog/post_form.html', {
+            'form': form
+        })
+
+
+class PostDeleteView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        post_data = Post.objects.get(id=self.kwargs['pk'])
+        return render(request, 'blog/post_delete.html', {
+            'post_data': post_data
+        })
+
+    def post(self, request, *args, **kwargs):
+        post_data = Post.objects.get(id=self.kwargs['pk'])
+        post_data.delete()
+        return redirect('index')

@@ -8,13 +8,16 @@
                 <div class="card-body">
                     <h2 class="car-title">{{ post.title }}</h2>
                     <p class="card-text">{{ post.content|truncatechars:100 }}</p>
-                    <div class="btn btn-warning">詳細</div>
+                    <div class="btn btn-warning">
+                        <a href="{% url 'post_detail' post.id %}" class="stretched-link">
+                            詳細
+                        </a>
+                    </div>
                 </div>
                 <div class="card-footer text-muted">
                     {{ post.created|date }} by {{ post.author }}
                 </div>
             </div>
-            <a href="{% url 'post_detail' post.id %}" class="stretched-link"></a>
         {% endfor %}
     </div>
 
