@@ -4,6 +4,10 @@ from .models import Post, Category
 from .forms import PostForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from django.db.models import Q
+from functools import reduce
+from operator import and_
+
 
 # Create your views here.
 class IndexView(View):
@@ -100,5 +104,24 @@ class CategoryView(View):
         category_data = Category.objects.get(name=self.kwargs['category'])
         post_data = Post.objects.order_by('-id').filter(category=category_data)
         return render(request, 'blog/index.html', {
+            'post_data': post_data
+        })
+
+class SearchView(View):
+    def get(self, request, *args, **kwargs):
+        post_data = Post.objects.order_by('-id')
+        keyword = request.GET.get('keyword')
+
+        if keyword:
+            exclusion_list = set([' ', '　'])
+            query_list = ''
+            for word in keyword:
+                if not word in exclusion_list:
+                    query_list += word
+            query = reduce(and_, [Q(title__icontains=q) | Q(content__icontains=q) for q in query_list])
+            post_data = post_data.filter(query)
+
+        return render(request, 'blog/index.html', {
+            'keyword': keyword,
             'post_data': post_data
         })
